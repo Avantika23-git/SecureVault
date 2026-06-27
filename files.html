@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stored Files</title>
+</head>
+<body>
+
+    <h1>Encrypted Files 🔐</h1>
+
+  <ul>
+    {% for file in files %}
+        <li>
+            {{ file }}
+            <a href="/download/{{ file }}">Download</a>
+            <a href="/delete/{{ file }}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+
+    <br>
+
+    <a href="/">Back to Upload</a>
+
+</body>
+</html>
