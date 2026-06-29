@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>SecureVault - PhishGuard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+...
+ 
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🔐</div>
+      <div>
+        <div class="logo-text">SecureVault</div>
+        <div class="logo-sub">v2.4.1</div>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-section-label">Core</div>
+    <a class="nav-item" href="#">
+      <span class="icon">🏠</span> Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🗄️</span> Vault
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🔑</span> Credentials
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🧩</span> Integrations
+    </a>
+ 
+    <div class="nav-section-label">Threat Intel</div>
+    <a class="nav-item active" href="#">
+      <span class="icon">🎣</span> PhishGuard
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">🔍</span> URL Scanner
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">📋</span> Reports
+    </a>
+ 
+    <div class="nav-section-label">System</div>
+    <a class="nav-item" href="#">
+      <span class="icon">⚙️</span> Settings
+    </a>
+    <a class="nav-item" href="#">
+      <span class="icon">📡</span> Audit Log
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="avatar">CA</div>
+      <div class="user-info">
+        <div class="user-name">Catherine A.</div>
+        <div class="user-role">Security Analyst</div>
+      </div>
+    </div>
+  </div>
+</aside>
+ 
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      SecureVault / Threat Intel / <span>PhishGuard</span>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot">
+        <div class="dot"></div>
+        API Online
+      </div>
+    </div>
+  </div>
+ 
+  <div class="content">
+    <div class="page-header">
+      <div class="page-eyebrow">Threat Detection Module</div>
+      <div class="page-title">PhishGuard</div>
+      <div class="page-desc">Paste email content to analyze for phishing tactics, suspicious URLs, and social engineering signals.</div>
+    </div>
+ 
+    <!-- ANALYZER INPUT -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🔬</span>
+        <span class="card-title">Email Analyzer</span>
+      </div>
+      <div class="card-body">
+        <div class="field-label">
+          Email content <span class="tag">plain text or raw</span>
+        </div>
+        <textarea id="emailInput" placeholder="Paste email body here — e.g. &quot;URGENT! Verify your account immediately. Click here https://example.com&quot;"></textarea>
+        <div class="error-msg" id="errorMsg"></div>
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeEmail()">
+          <div class="btn-spinner" id="spinner"></div>
+          <span id="btnText">⚡ Analyze Email</span>
+        </button>
+      </div>
+    </div>
+ 
+    <!-- RESULT PANEL -->
+    <div class="result-panel" id="resultPanel">
+ 
+      <!-- THREAT BANNER -->
+      <div class="threat-banner" id="threatBanner">
+        <div class="threat-icon" id="threatIcon"></div>
+        <div class="threat-content">
+          <div class="threat-level-label" id="threatLevelLabel"></div>
+          <div class="threat-headline" id="threatHeadline"></div>
+          <div class="threat-context" id="threatContext"></div>
+          <button class="report-btn" id="reportBtn" onclick="reportEmail()" style="display:none">
+            🚩 Report This Email
+          </button>
+        </div>
+      </div>
+ 
+      <!-- SCORE + TACTICS -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Risk Score</div>
+          <div class="score-display">
+            <div class="score-num" id="scoreNum">—</div>
+            <div class="score-max">/ 100</div>
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" id="scoreBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Detected Tactics</div>
+          <div class="tactics-list" id="tacticsList"></div>
+        </div>
+      </div>
+ 
+      <!-- URL DETAILS -->
+      <div class="card" id="urlCard" style="display:none">
+        <div class="card-header">
+          <span class="card-icon">🌐</span>
+          <span class="card-title">URL Intelligence</span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <table class="detail-table" id="urlTable"></table>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- RECENT SCANS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🕐</span>
+        <span class="card-title">Recent Scans</span>
+      </div>
+      <div class="card-body">
+        <div id="historyList">
+          <div class="history-item">
+            <div class="history-indicator danger"></div>
+            <div class="history-text">URGENT! Verify your account immediately...</div>
+            <div class="history-score danger">65</div>
+            <div class="history-time">2m ago</div>
+          </div>
+          <div class="history-item">
+            <div class="history-indicator caution"></div>
+            <div class="history-text">Your package delivery requires confirmation — click here</div>
+            <div class="history-score caution">42</div>
+            <div class="history-time">18m ago</div>
+          </div>
+          <div class="history-item">
+            <div class="history-indicator info"></div>
+            <div class="history-text">Monthly newsletter from team@company.com</div>
+            <div class="history-score info">8</div>
+            <div class="history-time">1h ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    const API_URL = "/analyze";
+
+function setLoading(on) {
+    const btn = document.getElementById("analyzeBtn");
+    const spinner = document.getElementById("spinner");
+    const txt = document.getElementById("btnText");
+
+    btn.disabled = on;
+    spinner.style.display = on ? "block" : "none";
+    txt.textContent = on ? "Analyzing..." : "⚡ Analyze Email";
+}
+
+function showError(msg) {
+    const el = document.getElementById("errorMsg");
+    el.textContent = msg;
+    el.style.display = "block";
+}
+
+function hideError() {
+    document.getElementById("errorMsg").style.display = "none";
+}
+
+function getTierFromScore(score) {
+    if (score >= 60) return "danger";
+    if (score >= 30) return "caution";
+    return "info";
+}
+
+function getTierConfig(tier) {
+
+    const configs = {
+        danger: {
+            icon: "🚨",
+            label: "HIGH RISK",
+            headline: "Phishing attempt detected",
+            context: "Do not click any links or provide credentials.",
+            scoreColor: "#ef4444"
+        },
+
+        caution: {
+            icon: "⚠️",
+            label: "MEDIUM RISK",
+            headline: "Suspicious email detected",
+            context: "Verify the sender before interacting.",
+            scoreColor: "#f59e0b"
+        },
+
+        info: {
+            icon: "✅",
+            label: "LOW RISK",
+            headline: "Email appears safe",
+            context: "No major phishing indicators detected.",
+            scoreColor: "#10b981"
+        }
+    };
+
+    return configs[tier];
+}
+
+function buildTacticsHTML(tactics) {
+
+    if (!tactics || tactics.length === 0)
+        return "<span>No tactics detected</span>";
+
+    return tactics.map(t =>
+        `<span class="tactic-chip">${t}</span>`
+    ).join("");
+}
+
+function buildURLTable(urlDetails) {
+
+    if (!urlDetails.length) return "";
+
+    let rows = "";
+
+    urlDetails.forEach(url => {
+
+        rows += `
+        <tr><td>Domain</td><td>${url.domain}</td></tr>
+        <tr><td>IP</td><td>${url.ip}</td></tr>
+        <tr><td>Country</td><td>${url.country}</td></tr>
+        <tr><td>City</td><td>${url.city}</td></tr>
+        <tr><td>ISP</td><td>${url.isp}</td></tr>
+        <tr><td>Malicious Engines</td><td>${url.malicious_engines}</td></tr>
+        <tr><td>Suspicious Engines</td><td>${url.suspicious_engines}</td></tr>
+        `;
+
+    });
+
+    return `
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        ${rows}
+    </tbody>
+    `;
+}
+
+async function analyzeEmail() {
+
+    const emailText = document.getElementById("emailInput").value.trim();
+
+    if (emailText === "") {
+
+        showError("Please paste an email first.");
+        return;
+    }
+
+    hideError();
+
+    setLoading(true);
+
+    document.getElementById("resultPanel").style.display = "none";
+
+    try {
+
+        const response = await fetch(API_URL, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                email: emailText
+            })
+
+        });
+
+        console.log("Status:", response.status);
+
+        if (!response.ok) {
+            throw new Error("Server returned " + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        renderResult(data);
+
+    }
+
+    catch(err) {
+
+        console.error(err);
+
+        showError("Could not connect to Flask API.");
+
+        const demo = {
+
+            risk_score:65,
+
+            threat_level:"HIGH",
+
+            tactics:[
+                "Urgency",
+                "Credential Theft",
+                "Click Bait"
+            ],
+
+            url_details:[{
+
+                domain:"google.com",
+
+                ip:"142.251.222.142",
+
+                country:"United States",
+
+                city:"Mountain View",
+
+                isp:"Google LLC",
+
+                malicious_engines:"Unknown",
+
+                suspicious_engines:"Unknown"
+
+            }]
+        };
+
+        renderResult(demo);
+
+    }
+
+    finally {
+
+        setLoading(false);
+
+    }
+
+}
+
+function renderResult(data) {
+
+    const score = data.risk_score;
+
+    const tier = getTierFromScore(score);
+
+    const cfg = getTierConfig(tier);
+
+    document.getElementById("resultPanel").style.display = "block";
+
+    document.getElementById("threatBanner").className =
+        "threat-banner " + tier;
+
+    document.getElementById("threatIcon").textContent =
+        cfg.icon;
+
+    document.getElementById("threatLevelLabel").textContent =
+        cfg.label;
+
+    document.getElementById("threatHeadline").textContent =
+        cfg.headline;
+
+    document.getElementById("threatContext").textContent =
+        cfg.context;
+
+    document.getElementById("scoreNum").textContent =
+        score;
+
+    document.getElementById("scoreNum").style.color =
+        cfg.scoreColor;
+
+    document.getElementById("scoreBar").style.width =
+        score + "%";
+
+    document.getElementById("scoreBar").style.background =
+        cfg.scoreColor;
+
+    document.getElementById("tacticsList").innerHTML =
+        buildTacticsHTML(data.tactics);
+
+    if (data.url_details.length > 0) {
+
+        document.getElementById("urlCard").style.display =
+            "block";
+
+        document.getElementById("urlTable").innerHTML =
+            buildURLTable(data.url_details);
+
+    }
+}
+
+function reportEmail(){
+
+    alert("Email reported successfully.");
+
+}
+    </script>
+    </body>
+    </html>
