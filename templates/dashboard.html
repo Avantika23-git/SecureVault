@@ -16,6 +16,32 @@ SecureVault / Threat Intel / <span>PhishGuard</span>
   <div class="page-desc">Real-time view of phishing detections, URL scans, and system health.</div>
 </div>
 
+<!-- ================= SecureVault Overview ================= -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-label">Encrypted Files</div>
+        <div class="stat-value">{{ stats.total_files }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">High Risk</div>
+        <div class="stat-value">{{ stats.high_risk }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">URLs Scanned</div>
+        <div class="stat-value">{{ stats.urls_scanned }}</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-label">Activities</div>
+        <div class="stat-value">{{ stats.activity_count }}</div>
+    </div>
+
+</div>
+
 <!-- ── STAT CARDS ── -->
 <div class="stats-grid">
   <div class="stat-card danger-card">
@@ -61,6 +87,36 @@ SecureVault / Threat Intel / <span>PhishGuard</span>
     <div class="stat-value" id="statUrls">{{ stats.urls_scanned or 58 }}</div>
     <div class="stat-trend trend-up">↑ 11 since yesterday</div>
   </div>
+</div>
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h3>Quick Actions</h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <a href="/vault" class="btn btn-primary">
+            Upload File
+        </a>
+
+        <a href="/files" class="btn btn-primary">
+            My Files
+        </a>
+
+        <a href="/phishguard" class="btn btn-primary">
+            Threat Detection
+        </a>
+
+        <a href="/logs" class="btn btn-primary">
+            Activity Logs
+        </a>
+
+    </div>
+
 </div>
 
 <!-- ── MAIN CONTENT GRID ── -->

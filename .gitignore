@@ -1,11 +1,26 @@
-**/secret.key
-
-venv/
+# Python
 __pycache__/
 *.pyc
 
-uploads/*
-encrypted_files/*
+# Virtual environment
+venv/
 
-!uploads/.gitkeep
-!encrypted_files/.gitkeep
+# Database
+*.db
+
+# Secret keys
+secret.key
+.env
+
+# User uploads
+uploads/
+
+# Reports generated
+reports/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

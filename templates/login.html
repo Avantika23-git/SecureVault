@@ -1,25 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Login</title>
+
+    <title>SecureVault Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/auth.css') }}">
+
 </head>
+
 <body>
 
-    <h1>Login</h1>
+<div class="card">
+
+    <div class="logo">🔐</div>
+
+    <h1>SecureVault</h1>
+
+    <p class="subtitle">
+        Secure File Encryption Platform
+    </p>
 
     <form method="POST">
-        <input type="text" name="username" placeholder="Enter Username" required>
-        <br><br>
 
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <br><br>
+        <div class="input-group">
 
-        <button type="submit">Login</button>
+            <label>Username</label>
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter Username"
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter Password"
+                required>
+
+        </div>
+
+        <button>
+
+            Login
+
+        </button>
+
     </form>
 
-    <br>
+    <div class="bottom">
 
-    <a href="/register">Create New Account</a>
+        Don't have an account?
+
+        <a href="{{ url_for('register') }}">
+
+            Register
+
+        </a>
+
+    </div>
+
+</div>
 
 </body>
+
 </html>

@@ -1,25 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Register</title>
+
+    <title>Create Account</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/auth.css') }}">
+
 </head>
+
 <body>
 
-    <h1>Register</h1>
+<div class="card">
+
+    <div class="logo">🛡️</div>
+
+    <h1>Create Account</h1>
+
+    <p class="subtitle">
+
+        Join SecureVault
+
+    </p>
 
     <form method="POST">
-        <input type="text" name="username" placeholder="Enter Username" required>
-        <br><br>
 
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <br><br>
+        <div class="input-group">
 
-        <button type="submit">Register</button>
+            <label>Username</label>
+
+            <input
+                type="text"
+                name="username"
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                required>
+
+        </div>
+
+        <button>
+
+            Register
+
+        </button>
+
     </form>
 
-    <br>
+    <div class="bottom">
 
-    <a href="/login">Already have an account? Login</a>
+        Already have an account?
+
+        <a href="{{ url_for('login') }}">
+
+            Login
+
+        </a>
+
+    </div>
+
+</div>
 
 </body>
+
 </html>

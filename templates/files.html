@@ -1,25 +1,90 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Stored Files</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>Encrypted Files 🔐</h1>
+{% block title %}My Files - SecureVault{% endblock %}
 
-  <ul>
-    {% for file in files %}
-        <li>
-            {{ file }}
-            <a href="/download/{{ file }}">Download</a>
-            <a href="/delete/{{ file }}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
+{% block content %}
 
-    <br>
+<div class="page-header">
+    <div class="page-eyebrow">Secure Storage</div>
+    <div class="page-title">My Encrypted Files</div>
+    <div class="page-desc">
+        All your encrypted files stored safely inside SecureVault.
+    </div>
+</div>
 
-    <a href="/">Back to Upload</a>
+<div class="card">
 
-</body>
-</html>
+    <div class="card-header">
+        <span class="card-title">Encrypted Vault</span>
+    </div>
+
+    <div class="card-body">
+
+        {% if files %}
+
+        <table class="table">
+
+            <thead>
+
+            <tr>
+                <th>Filename</th>
+                <th>Status</th>
+                <th width="250">Actions</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for file in files %}
+
+            <tr>
+
+                <td>{{ file }}</td>
+
+                <td>
+                    <span class="badge badge-safe">
+                        🔒 Encrypted
+                    </span>
+                </td>
+
+                <td>
+
+                    <a class="btn btn-primary"
+                       href="{{ url_for('download_file', filename=file) }}">
+                        Download
+                    </a>
+
+                    <a class="btn btn-danger"
+                       href="{{ url_for('delete_file', filename=file) }}"
+                       onclick="return confirm('Delete this file?')">
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div style="text-align:center;padding:50px;">
+
+            <h3>No files uploaded</h3>
+
+            <p>Your encrypted vault is currently empty.</p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,32 +1,121 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Activity Logs</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>Activity Logs</h1>
+{% block title %}Activity Logs - SecureVault{% endblock %}
 
-    <table border="1">
-        <tr>
-            <th>Filename</th>
-            <th>Action</th>
-            <th>Timestamp</th>
-        </tr>
+{% block content %}
 
-        {% for log in logs %}
-        <tr>
-            <td>{{ log.filename }}</td>
-            <td>{{ log.action }}</td>
-            <td>{{ log.timestamp }}</td>
-        </tr>
-        {% endfor %}
+<div class="page-header">
 
-    </table>
+    <div class="page-eyebrow">
+        Monitoring
+    </div>
 
-    <br>
+    <div class="page-title">
+        Activity Logs
+    </div>
 
-    <a href="/">Back to Dashboard</a>
+    <div class="page-desc">
+        Complete history of uploads, downloads and file operations.
+    </div>
 
-</body>
-</html>
+</div>
+
+<div class="card">
+
+<div class="card-header">
+
+<span class="card-title">
+Audit Trail
+</span>
+
+</div>
+
+<div class="card-body">
+
+{% if logs %}
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Time</th>
+
+<th>File</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for log in logs %}
+
+<tr>
+
+<td>{{ log.timestamp }}</td>
+
+<td>{{ log.filename }}</td>
+
+<td>
+
+{% if log.action=="Upload" %}
+
+<span class="badge badge-safe">
+
+⬆ Upload
+
+</span>
+
+{% elif log.action=="Download" %}
+
+<span class="badge badge-info">
+
+⬇ Download
+
+</span>
+
+{% elif log.action=="Delete" %}
+
+<span class="badge badge-danger">
+
+🗑 Delete
+
+</span>
+
+{% else %}
+
+{{ log.action }}
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<div style="padding:50px;text-align:center;">
+
+<h3>No activity found</h3>
+
+<p>Nothing has happened yet.</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

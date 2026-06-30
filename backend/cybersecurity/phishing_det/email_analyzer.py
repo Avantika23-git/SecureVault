@@ -1,5 +1,5 @@
-from phishing_keywords import detect_keywords
-from url_checker import extract_urls
+from .phishing_keywords import detect_keywords
+from .url_checker import extract_urls
 
 import re
 import socket
@@ -8,7 +8,7 @@ import json
 import os
 from urllib.parse import urlparse
 
-from virustotal_api import check_url
+from .virustotal_api import check_url
 
 
 
@@ -123,46 +123,48 @@ def analyze_email(text):
         "tactics": tactics,
         "url_details": url_details
     }
+    save_report(report)
 
     return report
 
 # Save report to JSON file
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
+import json
+import os
 
-def save_report(report, email_text="", report_type="phishguard"):
+REPORT_FILE = "reports/report_history.json"
+
+
+def save_report(report):
+
     os.makedirs("reports", exist_ok=True)
-    filename = "reports/report_history.json"
 
-    # Load existing history (or start fresh)
-    if os.path.exists(filename):
-        with open(filename, "r") as file:
+    if os.path.exists(REPORT_FILE):
+
+        with open(REPORT_FILE, "r") as f:
             try:
-                history = json.load(file)
-            except json.JSONDecodeError:
-                history = []
-    else:
-        history = []
+                reports = json.load(f)
+            except:
+                reports = []
 
-    # Build a record matching what reports.html expects
+    else:
+        reports = []
+
     record = {
-        "id": f"rpt_{uuid.uuid4().hex[:8]}",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "type": report_type,
-        "subject": (email_text[:80] + "...") if len(email_text) > 80 else email_text,
+        "id": str(uuid.uuid4())[:8],
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "risk_score": report["risk_score"],
         "threat_level": report["threat_level"],
         "tactics": report["tactics"],
-        "reported_by": "Catherine A.",
-        "status": "blocked" if report["threat_level"] == "HIGH"
-                  else "flagged" if report["threat_level"] == "MEDIUM"
-                  else "clean"
+        "url_details": report["url_details"]
     }
 
-    history.insert(0, record)  # newest first
+    reports.append(record)
 
-    with open(filename, "w") as file:
-        json.dump(history, file, indent=4)
+    with open(REPORT_FILE, "w") as f:
+        json.dump(reports, f, indent=4)
 
-    print("\nReport saved to history!")
+    print("Report saved.")
+
     return record
