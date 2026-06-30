@@ -2,21 +2,8 @@
 __pycache__/
 *.pyc
 
-# Virtual environment
+# Virtual Environment
 venv/
-
-# Database
-*.db
-
-# Secret keys
-secret.key
-.env
-
-# User uploads
-uploads/
-
-# Reports generated
-reports/
 
 # VSCode
 .vscode/
@@ -24,3 +11,22 @@ reports/
 # OS
 .DS_Store
 Thumbs.db
+
+# Python cache
+*.pyo
+*.pyd
+
+# Flask
+instance/
+
+# Database
+*.db
+
+# User uploads
+uploads/
+
+# Generated Reports
+reports/
+
+# Environment Variables
+.env
