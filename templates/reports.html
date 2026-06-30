@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Reports — SecureVault{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+SecureVault / Threat Intel / <span>Reports</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header rp-header-row">
+  <div>
+    <div class="page-eyebrow">Threat History</div>
+    <div class="page-title">Reports</div>
+    <div class="page-desc">All phishing detections and URL scans, exportable as PDF.</div>
+  </div>
+  <button class="btn btn-primary" onclick="exportAllPDF()">↓ Export All as PDF</button>
+</div>
+
+<!-- ── FILTER BAR ── -->
+<div class="card rp-filter-card">
+  <div class="card-body rp-filter-body">
+    <div class="rp-filter-group">
+      <label class="field-label" style="margin-bottom:6px">Filter by Type</label>
+      <div class="rp-filter-btns">
+        <button class="rp-filter-btn active" data-filter="all" onclick="filterReports(this,'all')">All</button>
+        <button class="rp-filter-btn" data-filter="phishguard" onclick="filterReports(this,'phishguard')">PhishGuard</button>
+        <button class="rp-filter-btn" data-filter="urlscanner" onclick="filterReports(this,'urlscanner')">URL Scanner</button>
+      </div>
+    </div>
+    <div class="rp-filter-group">
+      <label class="field-label" style="margin-bottom:6px">Threat Level</label>
+      <div class="rp-filter-btns">
+        <button class="rp-filter-btn active" data-level="all" onclick="filterLevel(this,'all')">All</button>
+        <button class="rp-filter-btn rp-danger-btn" data-level="HIGH" onclick="filterLevel(this,'HIGH')">High</button>
+        <button class="rp-filter-btn rp-caution-btn" data-level="MEDIUM" onclick="filterLevel(this,'MEDIUM')">Medium</button>
+        <button class="rp-filter-btn rp-safe-btn" data-level="LOW" onclick="filterLevel(this,'LOW')">Low</button>
+      </div>
+    </div>
+    <div class="rp-filter-group rp-search-group">
+      <label class="field-label" style="margin-bottom:6px">Search</label>
+      <input type="text" class="rp-search-input" id="rpSearch" placeholder="Search by subject…" oninput="searchReports(this.value)" />
+    </div>
+  </div>
+</div>
+
+<!-- ── REPORT TABLE ── -->
+<div class="card">
+  <div class="card-header">
+    <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span class="card-title">Scan History</span>
+    <span class="card-count" id="reportCount">{{ reports|length }} records</span>
+  </div>
+  <div class="card-body card-body-flush">
+    <table class="rp-table" id="reportTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Subject / URL</th>
+          <th>Type</th>
+          <th>Score</th>
+          <th>Threat Level</th>
+          <th>Tactics</th>
+          <th>Status</th>
+          <th>Time</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="reportBody">
+        {% for r in reports %}
+        <tr class="rp-row" data-type="{{ r.type }}" data-level="{{ r.threat_level }}" data-subject="{{ r.subject | lower }}">
+          <td class="rp-id">{{ r.id }}</td>
+          <td class="rp-subject">{{ r.subject }}</td>
+          <td>
+            <span class="badge badge-accent">
+              {% if r.type == 'phishguard' %}PhishGuard{% else %}URL Scan{% endif %}
+            </span>
+          </td>
+          <td>
+            <span class="badge {% if r.risk_score >= 60 %}badge-danger{% elif r.risk_score >= 30 %}badge-caution{% else %}badge-safe{% endif %}">
+              {{ r.risk_score }}
+            </span>
+          </td>
+          <td>
+            <span class="badge {% if r.threat_level == 'HIGH' %}badge-danger{% elif r.threat_level == 'MEDIUM' %}badge-caution{% else %}badge-safe{% endif %}">
+              {{ r.threat_level }}
+            </span>
+          </td>
+          <td class="rp-tactics">
+            {% for t in r.tactics[:2] %}
+              <span class="rp-tactic-chip">{{ t }}</span>
+            {% endfor %}
+            {% if r.tactics|length > 2 %}
+              <span class="rp-tactic-chip">+{{ r.tactics|length - 2 }}</span>
+            {% endif %}
+            {% if not r.tactics %}
+              <span style="color:var(--text-muted);font-size:12px">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge {% if r.status == 'blocked' %}badge-danger{% elif r.status == 'flagged' %}badge-caution{% else %}badge-safe{% endif %}">
+              {{ r.status }}
+            </span>
+          </td>
+          <td class="rp-time">{{ r.timestamp[:10] }}</td>
+          <td>
+            <button class="btn btn-ghost rp-export-btn" onclick="exportSinglePDF('{{ r.id }}')" style="padding:5px 10px;font-size:11px">
+              ↓ PDF
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)">No reports yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

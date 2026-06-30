@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SecureVault{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+SecureVault / Threat Intel / <span>PhishGuard</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-eyebrow">Overview</div>
+  <div class="page-title">Threat Dashboard</div>
+  <div class="page-desc">Real-time view of phishing detections, URL scans, and system health.</div>
+</div>
+
+<!-- ── STAT CARDS ── -->
+<div class="stats-grid">
+  <div class="stat-card danger-card">
+    <div class="stat-meta">
+      <span class="stat-label">High Risk Emails</span>
+      <span class="stat-icon-wrap danger-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+    </div>
+    <div class="stat-value" id="statHighRisk">{{ stats.high_risk or 3 }}</div>
+    <div class="stat-trend trend-up">↑ 2 since yesterday</div>
+  </div>
+
+  <div class="stat-card caution-card">
+    <div class="stat-meta">
+      <span class="stat-label">Caution Alerts</span>
+      <span class="stat-icon-wrap caution-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </span>
+    </div>
+    <div class="stat-value" id="statCaution">{{ stats.caution or 7 }}</div>
+    <div class="stat-trend trend-neutral">— same as yesterday</div>
+  </div>
+
+  <div class="stat-card safe-card">
+    <div class="stat-meta">
+      <span class="stat-label">Clean Emails</span>
+      <span class="stat-icon-wrap safe-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+    </div>
+    <div class="stat-value" id="statClean">{{ stats.clean or 41 }}</div>
+    <div class="stat-trend trend-down">↓ 3 since yesterday</div>
+  </div>
+
+  <div class="stat-card accent-card">
+    <div class="stat-meta">
+      <span class="stat-label">URLs Scanned</span>
+      <span class="stat-icon-wrap accent-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+    </div>
+    <div class="stat-value" id="statUrls">{{ stats.urls_scanned or 58 }}</div>
+    <div class="stat-trend trend-up">↑ 11 since yesterday</div>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT GRID ── -->
+<div class="dash-grid">
+
+  <!-- Recent Threats -->
+  <div class="card dash-threats">
+    <div class="card-header">
+      <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+      <span class="card-title">Recent Threats</span>
+      <a href="{{ url_for('reports') }}" class="card-link">View all →</a>
+    </div>
+    <div class="card-body card-body-flush">
+      <table class="threat-table">
+        <thead>
+          <tr>
+            <th>Subject / URL</th>
+            <th>Type</th>
+            <th>Score</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="recentThreats">
+          <tr>
+            <td class="threat-subject">URGENT! Verify your account immediately</td>
+            <td><span class="badge badge-accent">PhishGuard</span></td>
+            <td><span class="badge badge-danger">65</span></td>
+            <td class="threat-time">2m ago</td>
+          </tr>
+          <tr>
+            <td class="threat-subject">https://login-microsofft365.com</td>
+            <td><span class="badge badge-accent">URL Scan</span></td>
+            <td><span class="badge badge-danger">88</span></td>
+            <td class="threat-time">18m ago</td>
+          </tr>
+          <tr>
+            <td class="threat-subject">Your package delivery requires confirmation</td>
+            <td><span class="badge badge-accent">PhishGuard</span></td>
+            <td><span class="badge badge-caution">42</span></td>
+            <td class="threat-time">1h ago</td>
+          </tr>
+          <tr>
+            <td class="threat-subject">https://secure-paypa1.net/login</td>
+            <td><span class="badge badge-accent">URL Scan</span></td>
+            <td><span class="badge badge-danger">91</span></td>
+            <td class="threat-time">3h ago</td>
+          </tr>
+          <tr>
+            <td class="threat-subject">Monthly newsletter from team@company.com</td>
+            <td><span class="badge badge-accent">PhishGuard</span></td>
+            <td><span class="badge badge-safe">8</span></td>
+            <td class="threat-time">5h ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="dash-right">
+
+    <!-- Quick Scan -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span class="card-title">Quick Scan</span>
+      </div>
+      <div class="card-body">
+        <textarea class="qs-input" id="qsInput" placeholder="Paste email or URL to scan instantly…"></textarea>
+        <button class="btn btn-primary" style="width:100%;margin-top:12px;justify-content:center" onclick="quickScan()">
+          <div class="spinner" id="qsSpinner"></div>
+          <span id="qsBtnText">⚡ Quick Scan</span>
+        </button>
+        <div class="qs-result" id="qsResult" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Risk Breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="card-title">Risk Breakdown</span>
+      </div>
+      <div class="card-body">
+        <div class="risk-bar-row">
+          <span class="risk-bar-label">High Risk</span>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:18%;background:var(--danger)"></div></div>
+          <span class="risk-bar-val danger-txt">3</span>
+        </div>
+        <div class="risk-bar-row">
+          <span class="risk-bar-label">Caution</span>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:43%;background:var(--caution)"></div></div>
+          <span class="risk-bar-val caution-txt">7</span>
+        </div>
+        <div class="risk-bar-row">
+          <span class="risk-bar-label">Clean</span>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:80%;background:var(--safe)"></div></div>
+          <span class="risk-bar-val safe-txt">41</span>
+        </div>
+        <div class="risk-bar-row">
+          <span class="risk-bar-label">External</span>
+          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:30%;background:var(--info)"></div></div>
+          <span class="risk-bar-val info-txt">7</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="card">
+      <div class="card-header">
+        <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--safe)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="card-title">System Health</span>
+      </div>
+      <div class="card-body">
+        <div class="health-row">
+          <span class="health-label">PhishGuard API</span>
+          <span class="badge badge-safe">Online</span>
+        </div>
+        <div class="health-row">
+          <span class="health-label">URL Threat DB</span>
+          <span class="badge badge-safe">Synced</span>
+        </div>
+        <div class="health-row">
+          <span class="health-label">Report Engine</span>
+          <span class="badge badge-safe">Ready</span>
+        </div>
+        <div class="health-row">
+          <span class="health-label">Audit Logger</span>
+          <span class="badge badge-safe">Active</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

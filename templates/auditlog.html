@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Audit Log — SecureVault{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auditlog.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+  SecureVault / System / <span>Audit Log</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header al-header-row">
+  <div>
+    <div class="page-eyebrow">System Monitor</div>
+    <div class="page-title">Audit Log</div>
+    <div class="page-desc">Timestamped record of every action performed across SecureVault.</div>
+  </div>
+  <div class="al-header-actions">
+    <button class="btn btn-ghost" onclick="refreshLog()">↺ Refresh</button>
+    <button class="btn btn-primary" onclick="exportLog()">↓ Export Log</button>
+  </div>
+</div>
+
+<!-- ── QUICK STATS ── -->
+<div class="al-stats-row">
+  <div class="al-stat">
+    <div class="al-stat-val" id="totalEvents">{{ logs|length }}</div>
+    <div class="al-stat-label">Total Events</div>
+  </div>
+  <div class="al-stat">
+    <div class="al-stat-val danger-txt" id="highEvents">{{ logs | selectattr('level','equalto','HIGH') | list | length }}</div>
+    <div class="al-stat-label">High Risk</div>
+  </div>
+  <div class="al-stat">
+    <div class="al-stat-val caution-txt" id="warnEvents">{{ logs | selectattr('level','equalto','WARN') | list | length }}</div>
+    <div class="al-stat-label">Warnings</div>
+  </div>
+  <div class="al-stat">
+    <div class="al-stat-val safe-txt" id="infoEvents">{{ logs | selectattr('level','equalto','INFO') | list | length }}</div>
+    <div class="al-stat-label">Info Events</div>
+  </div>
+</div>
+
+<!-- ── FILTER BAR ── -->
+<div class="card">
+  <div class="card-body" style="padding:14px 20px">
+    <div class="al-filter-row">
+      <div class="al-filter-group">
+        <span class="field-label" style="margin-bottom:0;margin-right:10px">Level:</span>
+        <button class="al-filter-btn active" onclick="filterLog(this,'all')">All</button>
+        <button class="al-filter-btn al-danger-btn" onclick="filterLog(this,'HIGH')">HIGH</button>
+        <button class="al-filter-btn al-warn-btn" onclick="filterLog(this,'WARN')">WARN</button>
+        <button class="al-filter-btn al-info-btn" onclick="filterLog(this,'INFO')">INFO</button>
+      </div>
+      <input class="al-search-input" id="alSearch" placeholder="Search events…" oninput="searchLog(this.value)" />
+    </div>
+  </div>
+</div>
+
+<!-- ── LOG TABLE ── -->
+<div class="card">
+  <div class="card-body card-body-flush">
+    <table class="al-table">
+      <thead>
+        <tr>
+          <th style="width:160px">Timestamp</th>
+          <th style="width:70px">Level</th>
+          <th style="width:120px">Module</th>
+          <th>Event</th>
+          <th style="width:130px">Actor</th>
+        </tr>
+      </thead>
+      <tbody id="logBody">
+        {% set default_logs = [
+          {'ts':'2025-06-28 14:32:11','level':'HIGH','module':'PhishGuard','event':'High-risk email flagged — score 65. Tactics: Urgency, Credential Theft.','actor':'Catherine A.'},
+          {'ts':'2025-06-28 14:32:09','level':'INFO','module':'PhishGuard','event':'Email analysis initiated.','actor':'Catherine A.'},
+          {'ts':'2025-06-28 13:15:44','level':'HIGH','module':'URL Scanner','event':'Malicious URL blocked — login-microsofft365.com. Score 88.','actor':'Catherine A.'},
+          {'ts':'2025-06-28 11:50:20','level':'WARN','module':'PhishGuard','event':'Caution alert — score 42. Unfamiliar sender domain detected.','actor':'Catherine A.'},
+          {'ts':'2025-06-28 09:03:01','level':'INFO','module':'Settings','event':'API endpoint updated.','actor':'Catherine A.'},
+          {'ts':'2025-06-27 17:22:55','level':'INFO','module':'System','event':'SecureVault session started.','actor':'Catherine A.'},
+          {'ts':'2025-06-27 09:20:33','level':'HIGH','module':'URL Scanner','event':'Malicious URL blocked — secure-paypa1.net. Score 91.','actor':'Catherine A.'},
+          {'ts':'2025-06-27 08:05:11','level':'INFO','module':'PhishGuard','event':'Email analysis complete — score 8. Clean.','actor':'Catherine A.'},
+          {'ts':'2025-06-26 16:41:07','level':'WARN','module':'System','event':'API connection timeout. Retrying…','actor':'System'},
+          {'ts':'2025-06-26 10:10:00','level':'INFO','module':'Reports','event':'PDF report exported — rpt_002.','actor':'Catherine A.'},
+        ] %}
+        {% for log in (logs if logs else default_logs) %}
+        <tr class="al-row" data-level="{{ log.level }}" data-text="{{ (log.event + log.module + log.actor) | lower }}">
+          <td class="al-ts">{{ log.ts }}</td>
+          <td>
+            <span class="badge {% if log.level == 'HIGH' %}badge-danger{% elif log.level == 'WARN' %}badge-caution{% else %}badge-info{% endif %}">
+              {{ log.level }}
+            </span>
+          </td>
+          <td class="al-module">{{ log.module }}</td>
+          <td class="al-event">{{ log.event }}</td>
+          <td class="al-actor">{{ log.actor }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/auditlog.js') }}"></script>
+{% endblock %}

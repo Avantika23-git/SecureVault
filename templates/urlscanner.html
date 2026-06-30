@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}URL Scanner — SecureVault{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/urlscanner.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+SecureVault / Threat Intel / <span>URL Scanner</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-eyebrow">Threat Detection Module</div>
+  <div class="page-title">URL Scanner</div>
+  <div class="page-desc">Inspect any URL for typosquatting, malicious engines, geo-location anomalies, and redirect chains.</div>
+</div>
+
+<!-- ── SCAN INPUT ── -->
+<div class="card">
+  <div class="card-header">
+    <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span class="card-title">URL Inspector</span>
+  </div>
+  <div class="card-body">
+    <div class="field-label">Target URL <span class="field-tag">http or https</span></div>
+    <div class="us-input-row">
+      <input type="url" id="urlInput" class="us-input" placeholder="https://suspicious-example.com/login" />
+      <button class="btn btn-primary" id="scanBtn" onclick="scanURL()">
+        <div class="spinner" id="scanSpinner"></div>
+        <span id="scanBtnText">🔍 Scan URL</span>
+      </button>
+    </div>
+    <div class="us-error" id="usError"></div>
+  </div>
+</div>
+
+<!-- ── RESULT ── -->
+<div id="usResultPanel" style="display:none">
+
+  <div class="us-result-banner" id="usResultBanner">
+    <div class="us-result-icon" id="usResultIcon"></div>
+    <div class="us-result-content">
+      <div class="us-result-tier" id="usResultTier"></div>
+      <div class="us-result-headline" id="usResultHeadline"></div>
+      <div class="us-result-desc" id="usResultDesc"></div>
+    </div>
+  </div>
+
+  <div class="us-details-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Domain Intelligence</span>
+      </div>
+      <div class="card-body card-body-flush">
+        <table class="us-detail-table" id="domainTable"></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Threat Signals</span>
+      </div>
+      <div class="card-body">
+        <div id="threatSignals" class="us-signals"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SCAN HISTORY ── -->
+<div class="card">
+  <div class="card-header">
+    <svg class="card-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span class="card-title">Scan History</span>
+  </div>
+  <div class="card-body card-body-flush">
+    <table class="us-history-table">
+      <thead>
+        <tr><th>URL</th><th>Risk</th><th>Verdict</th><th>Time</th></tr>
+      </thead>
+      <tbody id="usHistoryBody">
+        <tr>
+          <td class="us-url-cell">https://login-microsofft365.com</td>
+          <td><span class="badge badge-danger">88</span></td>
+          <td><span class="badge badge-danger">Malicious</span></td>
+          <td class="us-time">18m ago</td>
+        </tr>
+        <tr>
+          <td class="us-url-cell">https://secure-paypa1.net/login</td>
+          <td><span class="badge badge-danger">91</span></td>
+          <td><span class="badge badge-danger">Malicious</span></td>
+          <td class="us-time">3h ago</td>
+        </tr>
+        <tr>
+          <td class="us-url-cell">https://google.com</td>
+          <td><span class="badge badge-safe">4</span></td>
+          <td><span class="badge badge-safe">Clean</span></td>
+          <td class="us-time">5h ago</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const SCAN_API_URL = "{{ api_url | default('http://127.0.0.1:5000/analyze') }}";
+</script>
+<script src="{{ url_for('static', filename='js/urlscanner.js') }}"></script>
+{% endblock %}
